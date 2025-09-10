@@ -1,5 +1,5 @@
 {
-  "name": "@zed-industries/claude-code-acp",
+  "name": "@office-ai/claude-code-acp",
   "publishConfig": {
     "access": "public"
   },
