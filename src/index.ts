@@ -11,8 +11,14 @@ process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
+// Parse command line arguments for Claude path
+const claudePathIndex = process.argv.indexOf('--claude-path');
+const claudePath = claudePathIndex !== -1 && claudePathIndex + 1 < process.argv.length 
+  ? process.argv[claudePathIndex + 1] 
+  : undefined;
+
 import { runAcp as runAcp } from "./acp-agent.js";
-runAcp();
+runAcp(claudePath);
 
 // Keep process alive
 process.stdin.resume();
