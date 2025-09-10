@@ -72,12 +72,14 @@ export class ClaudeAcpAgent implements Agent {
   fileContentCache: { [key: string]: string };
   backgroundTerminals: { [key: string]: BackgroundTerminal } = {};
   clientCapabilities?: ClientCapabilities;
+  claudePath?: string;
 
-  constructor(client: AgentSideConnection) {
+  constructor(client: AgentSideConnection, claudePath?: string) {
     this.sessions = {};
     this.client = client;
     this.toolUseCache = {};
     this.fileContentCache = {};
+    this.claudePath = claudePath;
   }
 
   async initialize(request: InitializeRequest): Promise<InitializeResponse> {
@@ -157,6 +159,8 @@ export class ClaudeAcpAgent implements Agent {
       // note: although not documented by the types, passing an absolute path
       // here works to find zed's managed node version.
       executable: process.execPath as any,
+      // Support custom Claude path
+      ...(this.claudePath && { pathToClaudeCodeExecutable: this.claudePath }),
     };
 
     const allowedTools = [];
@@ -590,9 +594,9 @@ export function toAcpNotifications(
   return output;
 }
 
-export function runAcp() {
+export function runAcp(claudePath?: string) {
   new AgentSideConnection(
-    (client) => new ClaudeAcpAgent(client),
+    (client) => new ClaudeAcpAgent(client, claudePath),
     nodeToWebWritable(process.stdout),
     nodeToWebReadable(process.stdin),
   );
